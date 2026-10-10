@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Multi Calculator</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --btn-bg: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      background: var(--card-bg);
+      padding: 6px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 400px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* Calculator Card */
+    .calc-container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      display: none;
+    }
+
+    .calc-container.active {
+      display: block;
+    }
+
+    label {
+      font-size: 14px;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 18px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .action-btn:active {
+      opacity: 0.8;
+    }
+
+    .result-box {
+      margin-top: 16px;
+      padding: 12px;
+      background: #0f172a;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* Standard Calculator Grid */
+    .screen {
+      width: 100%;
+      height: 60px;
+      background: #0f172a;
+      border-radius: 10px;
+      text-align: right;
+      padding: 15px;
+      font-size: 24px;
+      margin-bottom: 15px;
+      overflow-x: auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .grid button {
+      padding: 18px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      background: var(--btn-bg);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .grid button.op {
+      color: var(--accent);
+    }
+
+    .grid button.eq {
+      background: var(--accent);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Smart Calculator</h1>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('math')">Oddiy</button>
+    <button class="tab-btn" onclick="switchTab('bmi')">BMI</button>
+    <button class="tab-btn" onclick="switchTab('gpa')">GPA</button>
+    <button class="tab-btn" onclick="switchTab('discount')">Chegirma</button>
+  </div>
+
+  <!-- 1. Math Calculator -->
+  <div id="math" class="calc-container active">
+    <div id="screen" class="screen">0</div>
+    <div class="grid">
+      <button onclick="clearScreen()">C</button>
+      <button class="op" onclick="press('/')">/</button>
+      <button class="op" onclick="press('*')">*</button>
+      <button class="op" onclick="press('-')">-</button>
+
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button class="op" onclick="press('+')">+</button>
+
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button class="eq" onclick="calculate()">=</button>
+
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button onclick="press('0')">0</button>
+    </div>
+  </div>
+
+  <!-- 2. BMI Calculator -->
+  <div id="bmi" class="calc-container">
+    <label>Bo'y (sm):</label>
+    <input type="number" id="height" placeholder="175">
+    <label>Vazn (kg):</label>
+    <input type="number" id="weight" placeholder="70">
+    <button class="action-btn" onclick="calcBMI()">BMI hisoblash</button>
+    <div id="bmi-res" class="result-box" style="display:none;"></div>
+  </div>
+
+  <!-- 3. GPA Calculator -->
+  <div id="gpa" class="calc-container">
+    <label>Baholar (vergul bilan):</label>
+    <input type="text" id="grades" placeholder="5, 4, 5, 3, 5">
+    <button class="action-btn" onclick="calcGPA()">O'rtacha bahoni topish</button>
+    <div id="gpa-res" class="result-box" style="display:none;"></div>
+  </div>
+
+  <!-- 4. Discount Calculator -->
+  <div id="discount" class="calc-container">
+    <label>Asl narx:</label>
+    <input type="number" id="price" placeholder="100000">
+    <label>Chegirma foizi (%):</label>
+    <input type="number" id="disc" placeholder="20">
+    <button class="action-btn" onclick="calcDiscount()">Hisoblash</button>
+    <div id="disc-res" class="result-box" style="display:none;"></div>
+  </div>
+
+  <script>
+    function switchTab(id) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.calc-container').forEach(c => c.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    }
+
+    let screen = document.getElementById('screen');
+    function press(val) {
+      if (screen.innerText === '0') screen.innerText = '';
+      screen.innerText += val;
+    }
+    function clearScreen() {
+      screen.innerText = '0';
+    }
+    function calculate() {
+      try {
+        screen.innerText = eval(screen.innerText);
+      } catch {
+        screen.innerText = 'Xato';
+      }
+    }
+
+    function calcBMI() {
+      let h = document.getElementById('height').value / 100;
+      let w = document.getElementById('weight').value;
+      if (h > 0 && w > 0) {
+        let bmi = (w / (h * h)).toFixed(1);
+        let box = document.getElementById('bmi-res');
+        box.style.display = 'block';
+        box.innerText = 'Sizning BMI: ' + bmi;
+      }
+    }
+
+    function calcGPA() {
+      let input = document.getElementById('grades').value.split(',').map(Number);
+      let sum = input.reduce((a, b) => a + b, 0);
+      if (input.length > 0 && !isNaN(sum)) {
+        let avg = (sum / input.length).toFixed(2);
+        let box = document.getElementById('gpa-res');
+        box.style.display = 'block';
+        box.innerText = "O'rtacha baho: " + avg;
+      }
+    }
+
+    function calcDiscount() {
+      let p = document.getElementById('price').value;
+      let d = document.getElementById('disc').value;
+      if (p > 0 && d >= 0) {
+        let finalPrice = p - (p * (d / 100));
+        let box = document.getElementById('disc-res');
+        box.style.display = 'block';
+        box.innerText = 'Chegirmadagi narx: ' + finalPrice;
+      }
+    }
+  </script>
+</body>
+</html>
